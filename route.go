@@ -1,5 +1,7 @@
 package main
 
-func routeHandler()  {
-	// TODO
+import "coreDemo/framework"
+
+func registerRouter(core *framework.Core) {
+	core.Get("foo", FooControllerHandler)
 }
