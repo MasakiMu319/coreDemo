@@ -26,7 +26,7 @@ func FooControllerHandler(ctx *framework.Context) error {
 		// panic("panic test")
 
 		// 2. test timeout situation;
-		// time.Sleep(10 * time.Second)
+		time.Sleep(10 * time.Second)
 
 		// 3. test if everything is ok;
 		ctx.Json(200, "ok")
