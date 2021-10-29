@@ -22,6 +22,8 @@ type Context struct {
 	hasTimeout bool
 	// 写保护机制
 	writerMux *sync.Mutex
+	handlers []ControllerHandler
+	index int	// 当前处于请求调用链的哪个节点
 }
 
 func NewContext(r *http.Request, w http.ResponseWriter) *Context {
@@ -30,6 +32,9 @@ func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 		responseWriter: w,
 		ctx: r.Context(),
 		writerMux: &sync.Mutex{},
+		// index 值为 -1，由于每次调用自增的特性
+		// 这样才能保证第一次调用的 index 为 0；
+		index: -1,
 	}
 }
 
@@ -53,6 +58,10 @@ func (ctx *Context) SetHasTimeout() {
 
 func (ctx *Context) HasTimeout() bool {
 	return ctx.hasTimeout
+}
+
+func (ctx *Context) SetHandlers(handlers []ControllerHandler) {
+	ctx.handlers = handlers
 }
 
 // endregion
@@ -223,6 +232,16 @@ func (ctx *Context) HTML(status int, obj interface{}, template string) error {
 }
 
 func (ctx *Context) Text(status int, obj string) error {
+	return nil
+}
+
+func (ctx *Context) Next() error {
+	ctx.index++
+	if ctx.index < len(ctx.handlers) {
+		if err := ctx.handlers[ctx.index](ctx); err != nil {
+			return nil
+		}
+	}
 	return nil
 }
 

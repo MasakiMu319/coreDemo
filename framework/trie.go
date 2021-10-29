@@ -12,7 +12,7 @@ type Tree struct {
 type node struct {
 	isLast bool
 	segment string
-	handler ControllerHandler
+	handlers []ControllerHandler
 	childs []*node
 }
 
@@ -83,7 +83,7 @@ func (n *node) matchNode(uri string) *node {
 	return nil
 }
 
-func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
+func (tree *Tree) AddRouter(uri string, handlers []ControllerHandler) error {
 	n := tree.root
 	if n.matchNode(uri) != nil {
 		return errors.New("route exist: " + uri)
@@ -110,7 +110,7 @@ func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
 			cnode.segment = segment
 			if isLast {
 				cnode.isLast = true
-				cnode.handler = handler
+				cnode.handlers = handlers
 			}
 			n.childs = append(n.childs, cnode)
 			objNode = cnode
@@ -121,10 +121,10 @@ func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
 	return nil
 }
 
-func (tree *Tree) FindHandler(uri string) ControllerHandler {
+func (tree *Tree) FindHandler(uri string) []ControllerHandler {
 	matchNode := tree.root.matchNode(uri)
 	if matchNode == nil {
 		return nil
 	}
-	return matchNode.handler
+	return matchNode.handlers
 }
