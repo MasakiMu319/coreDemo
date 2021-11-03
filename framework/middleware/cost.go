@@ -1,19 +1,18 @@
 package middleware
 
 import (
-	"coreDemo/framework"
+	"github.com/luoshengyue/coreDemo/framework/gin"
 	"log"
 	"time"
 )
 
-func Cost() framework.ControllerHandler {
-	return func(c *framework.Context) error {
+func Cost() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		start := time.Now()
 		c.Next()
 		end := time.Now()
 		cost := end.Sub(start)
-		log.Printf("api uri: %v, cost: %v", c.GetRequest().RequestURI, cost.Seconds())
+		log.Printf("api uri: %v, cost: %v", c.Request.RequestURI, cost.Seconds())
 
-		return nil
 	}
 }

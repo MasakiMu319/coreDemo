@@ -1,8 +1,12 @@
 package main
 
-import "coreDemo/framework"
+import (
+	"github.com/luoshengyue/coreDemo/framework/gin"
+	"time"
+)
 
-func UserLoginController(c *framework.Context) error {
-	c.Json(200, "ok, UserLoginController")
-	return nil
+func UserLoginController(c *gin.Context) {
+	foo, _ := c.DefaultQueryString("foo", "def")
+	time.Sleep(10 * time.Second)
+	c.ISetOkStatus().IJson("ok, UserLoginController: " + foo)
 }
